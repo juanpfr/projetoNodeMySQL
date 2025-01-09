@@ -1,0 +1,28 @@
+{
+  "name": "projetonodemysql",
+  "version": "1.0.0",
+  "description": "Projeto NodeJS e MySQL",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juanpfr/projetoNodeMySQL.git"
+  },
+  "keywords": [
+    "express",
+    "express-handlebars",
+    "bootstrap",
+    "mysql"
+  ],
+  "author": "Juan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juanpfr/projetoNodeMySQL/issues"
+  },
+  "homepage": "https://github.com/juanpfr/projetoNodeMySQL#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
