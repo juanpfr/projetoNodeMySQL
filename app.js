@@ -5,7 +5,6 @@ const express = require('express')
 const app = express()
 
 // Rota teste
-
 app.get('/', function(req, res){
     res.write('teste')
     res.end()
