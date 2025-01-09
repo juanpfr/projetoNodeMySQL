@@ -57,11 +57,27 @@ app.get('/', function(req, res){
 
 // Rota de cadastro
 app.post('/cadastrar', function(req, res){
-    console.log(req.body)
-    console.log(req.files.imagem.name)
+    // Obter os dados que serão utilizados para o cadastro
+    let nome = req.body.nome
+    let valor = req.body.valor
+    let imagem = req.files.imagem.name
 
-    req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)                           // a função mv() serve para mover arquivos
-    res.end()
+    // SQL
+    let sql = `INSERT INTO produtos (nome, valor, imagem) VALUES ("${nome}", ${valor}, "${imagem}")`
+
+    // Executar comando SQL
+    conexao.query(sql, function(erro, retorno){
+
+        // Caso ocorra um erro
+        if(erro) throw erro
+
+        // Caso ocorra o cadastro
+        req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)                           // a função mv() serve para mover arquivos
+        console.log(retorno)
+    })
+
+    // Redirecionar para o rota principal
+    res.redirect('/')
 })
 
 // Servidor
