@@ -5,15 +5,23 @@ dotenv.config()
 // Importar módulo express
 const express = require('express')
 
+// Importar módulo fileupload
+const fileupload = require('express-fileupload')
+
 // Importar módulo mysql2
 const mysql = require('mysql2')
 
 // App
 const app = express()
 
-// Adicionar bootstrap
+// Habilitando o upload de arquivos
+app.use(fileupload())
 
+// Adicionar bootstrap
 app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'))
+
+// Adicionar CSS próprio
+app.use('/css', express.static('./css'))
 
 // Importar módulo express-handlebars
 const { engine } = require('express-handlebars')
@@ -22,6 +30,11 @@ const { engine } = require('express-handlebars')
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', './views');
+
+// Manipulação de dados via rotas
+app.use(express.json())
+app.use(express.urlencoded({extended:false}))
+
 
 // Configuração de conexão
 const conexao = mysql.createConnection({
@@ -37,9 +50,18 @@ conexao.connect(function(erro){
     console.log('Conexão efetuada com sucesso!')
 })
 
-// Rota teste
+// Rota principal
 app.get('/', function(req, res){
     res.render('formulario')
+})
+
+// Rota de cadastro
+app.post('/cadastrar', function(req, res){
+    console.log(req.body)
+    console.log(req.files.imagem.name)
+
+    req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)                           // a função mv() serve para mover arquivos
+    res.end()
 })
 
 // Servidor
