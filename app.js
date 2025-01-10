@@ -52,7 +52,13 @@ conexao.connect(function(erro){
 
 // Rota principal
 app.get('/', function(req, res){
-    res.render('formulario')
+    // SQL
+    let sql = 'SELECT * FROM produtos'
+
+    // Executar comandos SQL
+    conexao.query(sql, function(erro, retorno){
+        res.render('formulario',{produtos:retorno})
+    })
 })
 
 // Rota de cadastro
