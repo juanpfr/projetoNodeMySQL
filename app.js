@@ -114,5 +114,10 @@ app.get('/remover/:id&:imagem', function(req, res){
     res.redirect('/')
 })
 
+// Rota para redirecionar para o formulário de alteração
+app.get('/formularioAlterar/:id', function(req, res){
+    res.render('formularioAlterar')
+})
+
 // Servidor
 app.listen(8080)
