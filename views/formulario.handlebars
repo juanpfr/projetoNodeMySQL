@@ -12,4 +12,23 @@
             </div>
         </div>
     </div>
+
+    <!-- Listagem de produtos -->
+    <div class="container">
+        <div class="row">
+            {{#each produtos}}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card">
+                        <img src="../img/{{imagem}}">
+                        <div class="texto">
+                            <p>{{nome}}</p>
+                            <p>R${{valor}}</p>
+                        </div>
+                        <a href="#" class="btn btn-warning">Alterar</a>
+                        <a href="/remover/{{id}}&{{imagem}}" class="btn btn-danger">Remover</a>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
 </main>

@@ -1,4 +1,4 @@
-// Importar dotenv
+// Importar & configurar dotenv
 const dotenv = require('dotenv')
 dotenv.config()
 
@@ -11,6 +11,9 @@ const fileupload = require('express-fileupload')
 // Importar módulo mysql2
 const mysql = require('mysql2')
 
+// Importar módulo(nativo) File Systems
+const fs = require('fs')
+
 // App
 const app = express()
 
@@ -22,6 +25,9 @@ app.use('/bootstrap', express.static('./node_modules/bootstrap/dist'))
 
 // Adicionar CSS próprio
 app.use('/css', express.static('./css'))
+
+// Referenciar a pasta de imagens
+app.use('/img', express.static('./img'))
 
 // Importar módulo express-handlebars
 const { engine } = require('express-handlebars')
@@ -53,7 +59,7 @@ conexao.connect(function(erro){
 // Rota principal
 app.get('/', function(req, res){
     // SQL
-    let sql = 'SELECT * FROM produtos'
+    let sql = "SELECT * FROM produtos"
 
     // Executar comandos SQL
     conexao.query(sql, function(erro, retorno){
@@ -78,11 +84,33 @@ app.post('/cadastrar', function(req, res){
         if(erro) throw erro
 
         // Caso ocorra o cadastro
-        req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)                           // a função mv() serve para mover arquivos
+            // a função mv() serve para mover arquivos
+        req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)
         console.log(retorno)
     })
 
     // Redirecionar para o rota principal
+    res.redirect('/')
+})
+
+// Rota para remover
+app.get('/remover/:id&:imagem', function(req, res){
+    // SQL
+    let sql = `DELETE FROM produtos WHERE id = ${req.params.id}`
+
+    // Executar comando SQL
+    conexao.query(sql, function(erro, retorno){
+        // Caso ocorra falha no SQL
+        if (erro) throw erro
+
+        // Caso funcione o SQL
+            // fs.unlink() faz a remoção do arquivo
+        fs.unlink(__dirname + '/img/' + req.params.imagem, (erro_imagem)=>{
+            console.log('Falha ao remover a imagem')
+        })
+    })
+
+    // Redirecionar para a rota principal
     res.redirect('/')
 })
 

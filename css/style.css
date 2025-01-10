@@ -11,3 +11,19 @@ form{
 form input{
     margin-bottom: 10px;
 }
+
+.card{
+    margin-top: 40px;
+    padding: 5px;
+}
+
+.card a{
+    margin-top: 5px;
+}
+
+.texto{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    font-weight: bold;
+}
