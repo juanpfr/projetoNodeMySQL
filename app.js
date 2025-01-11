@@ -39,7 +39,7 @@ app.set('views', './views');
 
 // Manipulação de dados via rotas
 app.use(express.json())
-app.use(express.urlencoded({extended:false}))
+app.use(express.urlencoded({ extended: false }))
 
 
 // Configuração de conexão
@@ -51,72 +51,82 @@ const conexao = mysql.createConnection({
 })
 
 // Teste de conexão
-conexao.connect(function(erro){
-    if(erro) throw erro
+conexao.connect(function (erro) {
+    if (erro) throw erro
     console.log('Conexão efetuada com sucesso!')
 })
 
 // Rota principal
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     // SQL
     let sql = "SELECT * FROM produtos"
 
     // Executar comandos SQL
-    conexao.query(sql, function(erro, retorno){
-        res.render('formulario',{produtos:retorno, situacao:req.params.sutiacao})
+    conexao.query(sql, function (erro, retorno) {
+        res.render('formulario', { produtos: retorno, situacao: req.params.sutiacao })
     })
 })
 
 // Rota principal contendo a situação
-app.get('/:situacao', function(req, res){
+app.get('/:situacao', function (req, res) {
     // SQL
     let sql = "SELECT * FROM produtos"
 
     // Executar comandos SQL
-    conexao.query(sql, function(erro, retorno){
-        res.render('formulario',{produtos:retorno})
+    conexao.query(sql, function (erro, retorno) {
+        res.render('formulario', { produtos: retorno })
     })
 })
 
 // Rota de cadastro
-app.post('/cadastrar', function(req, res){
-    // Obter os dados que serão utilizados para o cadastro
-    let nome = req.body.nome
-    let valor = req.body.valor
-    let imagem = req.files.imagem.name
+app.post('/cadastrar', function (req, res) {
+    try {
+        // Obter os dados que serão utilizados para o cadastro
+        let nome = req.body.nome
+        let valor = req.body.valor
+        let imagem = req.files.imagem.name
 
-    // SQL
-    let sql = `INSERT INTO produtos (nome, valor, imagem) VALUES ("${nome}", ${valor}, "${imagem}")`
+        // Validar nome e valor do produto
+        if (nome == "" || valor == "" || isNaN(valor)) {
+            res.redirect('/falhaCadastro')
+        } else {
+            // SQL
+            let sql = `INSERT INTO produtos (nome, valor, imagem) VALUES ("${nome}", ${valor}, "${imagem}")`
 
-    // Executar comando SQL
-    conexao.query(sql, function(erro, retorno){
+            // Executar comando SQL
+            conexao.query(sql, function (erro, retorno) {
 
-        // Caso ocorra um erro
-        if(erro) throw erro
+                // Caso ocorra um erro
+                if (erro) throw erro
 
-        // Caso ocorra o cadastro
-            // a função mv() serve para mover arquivos
-        req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)
-        console.log(retorno)
-    })
+                // Caso ocorra o cadastro
+                // a função mv() serve para mover arquivos
+                req.files.imagem.mv(__dirname + '/img/' + req.files.imagem.name)
+                console.log(retorno)
+            })
 
-    // Redirecionar para o rota principal
-    res.redirect('/')
+            // Redirecionar para o rota principal
+            res.redirect('/okCadastro')
+        }
+    }
+    catch (erro) {
+        res.redirect('/falhaCadastro')
+    }
 })
 
 // Rota para remover
-app.get('/remover/:id&:imagem', function(req, res){
+app.get('/remover/:id&:imagem', function (req, res) {
     // SQL
     let sql = `DELETE FROM produtos WHERE id = ${req.params.id}`
 
     // Executar comando SQL
-    conexao.query(sql, function(erro, retorno){
+    conexao.query(sql, function (erro, retorno) {
         // Caso ocorra falha no SQL
         if (erro) throw erro
 
         // Caso funcione o SQL
-            // fs.unlink() faz a remoção do arquivo
-        fs.unlink(__dirname + '/img/' + req.params.imagem, (erro_imagem)=>{
+        // fs.unlink() faz a remoção do arquivo
+        fs.unlink(__dirname + '/img/' + req.params.imagem, (erro_imagem) => {
             console.log('Falha ao remover a imagem')
         })
     })
@@ -126,31 +136,31 @@ app.get('/remover/:id&:imagem', function(req, res){
 })
 
 // Rota para redirecionar para o formulário de alteração
-app.get('/formularioAlterar/:id', function(req, res){
+app.get('/formularioAlterar/:id', function (req, res) {
     // SQL
     let sql = `SELECT * FROM produtos WHERE id = ${req.params.id}`
 
     // Executar o comando SQL
-    conexao.query(sql, function(erro, retorno){
+    conexao.query(sql, function (erro, retorno) {
         // Caso ocorra falha
-        if(erro) throw erro
+        if (erro) throw erro
 
         // Caso consiga executar comando SQL
-        res.render('formularioAlterar', {produto:retorno[0]})
+        res.render('formularioAlterar', { produto: retorno[0] })
     })
 })
 
 // Rota para alterar produtos
-app.post('/alterar', function(req, res){
+app.post('/alterar', function (req, res) {
     // Obter os dados do formulário
     let id = req.body.id
     let nome = req.body.nome
     let valor = req.body.valor
     let nomeImagem = req.body.nomeImagem
-    
+
 
     // Definir o tipo de alteração
-    try{
+    try {
         // Objeto de imagem
         let imagem = req.files.imagem
 
@@ -158,12 +168,12 @@ app.post('/alterar', function(req, res){
         let sql = `UPDATE produtos SET nome = "${nome}", valor = ${valor}, imagem = "${imagem.name}" WHERE id = ${id}`
 
         // Executar comando SQL
-        conexao.query(sql, function(erro, retorno){
+        conexao.query(sql, function (erro, retorno) {
             // Caso ocorra falha
             if (erro) throw erro
 
             // Remover imagem antiga
-            fs.unlink(__dirname + '/img/' + nomeImagem, (erro_imagem)=>{
+            fs.unlink(__dirname + '/img/' + nomeImagem, (erro_imagem) => {
                 console.log('Ouve um erro ao remover imagem antiga')
             })
 
@@ -171,12 +181,12 @@ app.post('/alterar', function(req, res){
             imagem.mv(__dirname + '/img/' + imagem.name)
         })
     }
-    catch(erro){
+    catch (erro) {
         // SQL
         let sql = `UPDATE produtos SET nome = "${nome}", valor = ${valor} WHERE id = ${id}`
 
         // Executar comando SQL
-        conexao.query(sql, function(erro, retorno){
+        conexao.query(sql, function (erro, retorno) {
             // Caso ocorra falha
             if (erro) throw erro
         })
