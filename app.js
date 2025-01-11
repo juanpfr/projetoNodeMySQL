@@ -116,7 +116,37 @@ app.get('/remover/:id&:imagem', function(req, res){
 
 // Rota para redirecionar para o formulário de alteração
 app.get('/formularioAlterar/:id', function(req, res){
-    res.render('formularioAlterar')
+    // SQL
+    let sql = `SELECT * FROM produtos WHERE id = ${req.params.id}`
+
+    // Executar o comando SQL
+    conexao.query(sql, function(erro, retorno){
+        // Caso ocorra falha
+        if(erro) throw erro
+
+        // Caso consiga executar comando SQL
+        res.render('formularioAlterar', {produto:retorno[0]})
+    })
+})
+
+// Rota para alterar produtos
+app.post('/alterar', function(req, res){
+    // Obter os dados do formulário
+    let id = req.body.id
+    let nome = req.body.nome
+    let valor = req.body.valor
+    let nomeImagem = req.body.nomeImagem
+    let imagem = req.files.imagem.name
+
+    // Exibir os dados
+    console.log(id)
+    console.log(nome)
+    console.log(valor)
+    console.log(nomeImagem)
+    console.log(imagem)
+
+    // Finalizar rota
+    res.end()
 })
 
 // Servidor
