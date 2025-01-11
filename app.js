@@ -63,6 +63,17 @@ app.get('/', function(req, res){
 
     // Executar comandos SQL
     conexao.query(sql, function(erro, retorno){
+        res.render('formulario',{produtos:retorno, situacao:req.params.sutiacao})
+    })
+})
+
+// Rota principal contendo a situação
+app.get('/:situacao', function(req, res){
+    // SQL
+    let sql = "SELECT * FROM produtos"
+
+    // Executar comandos SQL
+    conexao.query(sql, function(erro, retorno){
         res.render('formulario',{produtos:retorno})
     })
 })
