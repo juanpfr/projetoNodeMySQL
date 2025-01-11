@@ -158,42 +158,46 @@ app.post('/alterar', function (req, res) {
     let valor = req.body.valor
     let nomeImagem = req.body.nomeImagem
 
+    // Validar nome do produto e valor
+    if (nome == "" || valor == "" || isNaN(valor)) {
+        res.redirect('/falhaAlterar')
+    } else {
+        // Definir o tipo de alteração
+        try {
+            // Objeto de imagem
+            let imagem = req.files.imagem
 
-    // Definir o tipo de alteração
-    try {
-        // Objeto de imagem
-        let imagem = req.files.imagem
+            // SQL
+            let sql = `UPDATE produtos SET nome = "${nome}", valor = ${valor}, imagem = "${imagem.name}" WHERE id = ${id}`
 
-        // SQL
-        let sql = `UPDATE produtos SET nome = "${nome}", valor = ${valor}, imagem = "${imagem.name}" WHERE id = ${id}`
+            // Executar comando SQL
+            conexao.query(sql, function (erro, retorno) {
+                // Caso ocorra falha
+                if (erro) throw erro
 
-        // Executar comando SQL
-        conexao.query(sql, function (erro, retorno) {
-            // Caso ocorra falha
-            if (erro) throw erro
+                // Remover imagem antiga
+                fs.unlink(__dirname + '/img/' + nomeImagem, (erro_imagem) => {
+                    console.log('Ouve um erro ao remover imagem antiga')
+                })
 
-            // Remover imagem antiga
-            fs.unlink(__dirname + '/img/' + nomeImagem, (erro_imagem) => {
-                console.log('Ouve um erro ao remover imagem antiga')
+                // Cadastrar nova imagem
+                imagem.mv(__dirname + '/img/' + imagem.name)
             })
+        }
+        catch (erro) {
+            // SQL
+            let sql = `UPDATE produtos SET nome = "${nome}", valor = ${valor} WHERE id = ${id}`
 
-            // Cadastrar nova imagem
-            imagem.mv(__dirname + '/img/' + imagem.name)
-        })
+            // Executar comando SQL
+            conexao.query(sql, function (erro, retorno) {
+                // Caso ocorra falha
+                if (erro) throw erro
+            })
+        }
+
+        // Redirecionar rota
+        res.redirect('/okAlterar')
     }
-    catch (erro) {
-        // SQL
-        let sql = `UPDATE produtos SET nome = "${nome}", valor = ${valor} WHERE id = ${id}`
-
-        // Executar comando SQL
-        conexao.query(sql, function (erro, retorno) {
-            // Caso ocorra falha
-            if (erro) throw erro
-        })
-    }
-
-    // Redirecionar rota
-    res.redirect('/')
 })
 
 // Servidor
