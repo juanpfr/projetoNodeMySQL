@@ -116,23 +116,28 @@ app.post('/cadastrar', function (req, res) {
 
 // Rota para remover
 app.get('/remover/:id&:imagem', function (req, res) {
-    // SQL
-    let sql = `DELETE FROM produtos WHERE id = ${req.params.id}`
+    try {
+        // SQL
+        let sql = `DELETE FROM produtos WHERE id = ${req.params.id}`
 
-    // Executar comando SQL
-    conexao.query(sql, function (erro, retorno) {
-        // Caso ocorra falha no SQL
-        if (erro) throw erro
+        // Executar comando SQL
+        conexao.query(sql, function (erro, retorno) {
+            // Caso ocorra falha no SQL
+            if (erro) throw erro
 
-        // Caso funcione o SQL
-        // fs.unlink() faz a remoção do arquivo
-        fs.unlink(__dirname + '/img/' + req.params.imagem, (erro_imagem) => {
-            console.log('Falha ao remover a imagem')
+            // Caso funcione o SQL
+            // fs.unlink() faz a remoção do arquivo
+            fs.unlink(__dirname + '/img/' + req.params.imagem, (erro_imagem) => {
+                console.log('Falha ao remover a imagem')
+            })
         })
-    })
 
-    // Redirecionar para a rota principal
-    res.redirect('/')
+        // Redirecionamento
+        res.redirect('/okRemover')
+    }
+    catch (erro) {
+        res.redirect('falhaRemover')
+    }
 })
 
 // Rota para redirecionar para o formulário de alteração
