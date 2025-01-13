@@ -33,7 +33,14 @@ app.use('/img', express.static('./img'))
 const { engine } = require('express-handlebars')
 
 // Configuração do express-handlebars
-app.engine('handlebars', engine());
+app.engine('handlebars', engine({
+    helpers: {
+      // Função auxiliar para verificar igualdade
+      condicionalIgualdade: function (parametro1, parametro2, options) {
+        return parametro1 === parametro2 ? options.fn(this) : options.inverse(this);
+      }
+    }
+  }));
 app.set('view engine', 'handlebars');
 app.set('views', './views');
 
@@ -63,7 +70,7 @@ app.get('/', function (req, res) {
 
     // Executar comandos SQL
     conexao.query(sql, function (erro, retorno) {
-        res.render('formulario', { produtos: retorno, situacao: req.params.sutiacao })
+        res.render('formulario', { produtos: retorno })
     })
 })
 
@@ -74,7 +81,7 @@ app.get('/:situacao', function (req, res) {
 
     // Executar comandos SQL
     conexao.query(sql, function (erro, retorno) {
-        res.render('formulario', { produtos: retorno })
+        res.render('formulario', { produtos: retorno, situacao: req.params.situacao })
     })
 })
 

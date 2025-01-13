@@ -3,6 +3,31 @@
     <div class="container">
         <div class="row">
             <div class="col-6 offset-3">
+                <!-- Mensagens -->
+                {{#condicionalIgualdade situacao "okCadastro"}}
+                <div class="alert alert-success">Produto cadastrado com sucesso!</div>
+                {{/condicionalIgualdade}}
+
+                {{#condicionalIgualdade situacao "okAlterar"}}
+                <div class="alert alert-success">Produto alterado com sucesso!</div>
+                {{/condicionalIgualdade}}
+
+                {{#condicionalIgualdade situacao "okRemover"}}
+                <div class="alert alert-success">Produto removido com sucesso!</div>
+                {{/condicionalIgualdade}}
+
+                {{#condicionalIgualdade situacao "falhaCadastro"}}
+                <div class="alert alert-danger">Falha ao cadastrar o produto, tente novamente.</div>
+                {{/condicionalIgualdade}}
+
+                {{#condicionalIgualdade situacao "falhaAlterar"}}
+                <div class="alert alert-danger">Falha ao alterar o produto, tente novamente.</div>
+                {{/condicionalIgualdade}}
+
+                {{#condicionalIgualdade situacao "falhaRemover"}}
+                <div class="alert alert-danger">Falha ao remover o produto, tente novamente.</div>
+                {{/condicionalIgualdade}}
+
                 <form action="/cadastrar" method="post" enctype="multipart/form-data">
                     <input type="text" name="nome" class="form-control" placeholder="Nome do produto">
                     <input type="number" name="valor" class="form-control" placeholder="Valor do produto">
@@ -17,17 +42,17 @@
     <div class="container">
         <div class="row">
             {{#each produtos}}
-                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                    <div class="card">
-                        <img src="../img/{{imagem}}">
-                        <div class="texto">
-                            <p>{{nome}}</p>
-                            <p>R${{valor}}</p>
-                        </div>
-                        <a href="/formularioAlterar/{{id}}" class="btn btn-warning">Alterar</a>
-                        <a href="/remover/{{id}}&{{imagem}}" class="btn btn-danger">Remover</a>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card">
+                    <img src="../img/{{imagem}}">
+                    <div class="texto">
+                        <p>{{nome}}</p>
+                        <p>R${{valor}}</p>
                     </div>
+                    <a href="/formularioAlterar/{{id}}" class="btn btn-warning">Alterar</a>
+                    <a href="/remover/{{id}}&{{imagem}}" class="btn btn-danger">Remover</a>
                 </div>
+            </div>
             {{/each}}
         </div>
     </div>
